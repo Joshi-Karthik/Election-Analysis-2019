@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Indian Election-2019 Analysis through Tweet Sentiments</title>
+<!--Including Boot strap library-->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<!--Including jquery library-->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<!--D3 Library from Cloudflare -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+ <!--Including Boot strap library-->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+<!--Loading CSS files-->
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="global-tour.css">
+<script src="https://d3js.org/d3.v4.js"></script>
+
+</head>
+
+
+<body>  
+<!--    Loading D3 Libraries-->
+    <script src="http://d3js.org/d3.v2.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.11/d3.min.js"></script> 
+    <script src="https://d3js.org/d3-collection.v1.min.js"></script>
+    <script src="https://d3js.org/d3-dispatch.v1.min.js"></script>
+    <script src="https://d3js.org/d3-dsv.v1.min.js"></script>
+    <script src="https://d3js.org/d3-request.v1.min.js"></script>
+    <script src="https://d3js.org/d3-queue.v3.min.js"></script>
+    <script src="https://unpkg.com/swiftmap@0.1.22/dist/swiftmap.min.js"></script>
+<!--Loading wordcloud js files -->
+    <script src="d3.js"></script>
+    <script src="d3.layout.cloud.js"></script>
+    <script src="d3.wordcloud.js"></script>
+     <script src="https://d3js.org/d3-queue.v3.min.js"></script>  
+<!--   CSS for divs-->
+    <style>
+          div.absolute {
+          position: absolute;
+          top: 500px;
+          right: 10px;
+          width: 360px;
+          height: 100px;
+          line-height: 1.6;
+          font-family:   Arial, Helvetica, sans-serif;
+          font-size:     18px;
+         font-weight:    bold;
+        }
+    
+    
+        #party.absolute {
+          position: absolute;
+          top: 500px;
+          left: 10px;
+          width: 360px;
+          height: 100px;
+          line-height: 1.6;
+          font-family:   Arial, Helvetica, sans-serif;
+          font-size:     18px;
+         font-weight:    bold;
+            text-align:justify;
+        }
+            #wordclouds.absolute {
+          position: absolute;
+          top: 2000px;
+          right: 10px;
+          width: 360px;
+          height: 100px;
+          line-height: 1.6;
+          font-family:   Arial, Helvetica, sans-serif;
+          font-size:     18px;
+         font-weight:    bold;
+        text-align:justify;
+        }
+        
+/*
+         #lang{
+          position: absolute;
+          top: 1500px;
+          right: 1500px;
+          width: 600px;
+          height: 100px;
+          line-height: 1.6;
+          font-family:   Arial, Helvetica, sans-serif;
+          font-size:     22px;
+         font-weight:    bold;
+        }
+*/
+        
+        #distinctCountries{
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          width: 350px;
+          height: 100px;
+          line-height: 1.6;
+          font-family:   Arial, Helvetica, sans-serif;
+          font-size:     18px;
+         font-weight:    bold;
+         text-align:justify;
+        }
+        
+    </style>
+ 
+<!--Creating Div for heading  -->
+    <div class="absolute">
+        <p> What is the popularity of Modi and Rahul on Twitter?</p>
+        <p> We can see from the Guage chart Modi is 60% popular when compared to Rahul <br><br><br> The below legend displays the total seats secured by each political party and BJP is leading with 348 seats </p>
+            </div>
+ 
+    <div class="absolute" id="party">
+        
+        <p> From the Map it is clear that orange colour(BJP) is widely spread across the country and green(INC) has secured thier win in 6 states<br><br><br>Black Coloured States indicate there is no data available</p>
+            </div>
+
+    
+<!--    Linking it to other sheet-->
+	<div id="nav">
+        <h2>Analysis of Indian Elections</h2>
+        <p>
+            Predicting the Winning Political Party in Each State and the upcoming Prime Minister
+        </p>
+        <p>
+            Click on the button to see Total Voting Turnout Percentage across the States 
+			<button onclick="location.href='.//VoterTurnout.html'" type="button">
+			Voter Turnout</button>
+			
+        </p>
+        
+    </div>
+<!--Container using Boot Strap and creating spaces for each graph -->
+	<div class="container-fluid">
+	<div class="row">	
+	<div class="col-sm-2" id="rahul">
+	</div>
+	<div class="col-sm-8">
+		<div id="arc"></div>
+	</div>
+	<div class="col-sm-2" id="modi"></div>
+	</div>
+	<div id="map"></div>
+<!--Container fo boxes which are as legend	-->
+	<div class="row">	
+	<div class="col-sm-2">
+        <svg xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <rect x="0" y="0" width="225" height="150" fill="orange"></rect>
+    <text x="20" y="80" font-family="Verdana" font-size="20" fill="black" >BJP Total Seats:348 </text>
+    
+  </g>
+</svg>
+        </div>
+	<div class="col-sm-2">
+        <svg xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <rect x="0" y="0" width="225" height="150" fill="green"></rect>
+    <text x="20" y="80" font-family="Verdana" font-size="20" fill="yellow">INC Total Seats:48 </text>
+  </g>
+</svg></div>
+    <div class="col-sm-2">
+         <svg xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <rect x="0" y="0" width="225" height="150" fill="khaki"></rect>
+    <text x="20" y="80" font-family="Verdana" font-size="20" fill="black">DMK Total Seats:39</text>
+  </g>
+</svg></div>
+           
+    <div class="col-sm-2">
+        <svg xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <rect x="0" y="0" width="225" height="150" fill="purple"></rect>
+    <text x="20" y="80" font-family="Verdana" font-size="20" fill="yellow">TMC Total Seats:42</text>
+  </g>
+</svg></div>
+            
+	<div class="col-sm-2">
+        <svg xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <rect x="0" y="0" width="225" height="150" fill="brown"></rect>
+    <text x="20" y="80" font-family="Verdana" font-size="20" fill="yellow">TDP Total Seats:42</text>
+  </g>
+</svg></div>
+            
+    <div class="col-sm-2">
+            <svg xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <rect x="0" y="0" width="200" height="150" fill="red"></rect>
+    <text x="20" y="80" font-family="Verdana" font-size="20" fill="black">UDF Total Seats:20 </text>
+  </g>
+</svg></div>
+	
+	</div>
+	
+		
+<div> </div>	
+<div id="nav">
+    <h2>Analysis of Indian Elections</h2>
+        <p>
+            Comparison Between the two Probable Prime Minster Narendra Modi and Rahul Gandhi
+        </p>        
+</div>
+<!-- Container for word clouds       -->
+<div class="row">	
+	<div class="col-sm-4" id="word_rahul"></div>
+	<div class="col-sm-4" id="photo"></div>
+	<div class="col-sm-4" id="word_modi"></div>
+	</div>
+        
+ <style> div.col-sm-4 {
+
+  font-family:   Arial, Helvetica, sans-serif;
+  font-size:     18px;
+font-weight:    bold;}
+ </style>
+<!--Container for text     -->
+<div class="row">	
+	<div class="col-sm-4" align="justify" >The Word cloud of Rahul Gandhi shows he is a congress leader. The cloud shows more negative words like fool,liar etc which shows people are not happy with the works he is doing as a leader and they may not elect him in future.Some people call him Master as well which is seen on the graph above. It also shows memes which proves he is good it. <br><br><br><br> </div>
+	<div class="col-sm-4" ></div>
+    <div class="col-sm-4" align="justify" >The Word cloud of Modi shows he is a BJP leader. The cloud shows more positive words.People have more anticipation and trust in Modi which is clear. This is also significant because the recent actions which Modi took to revert back Pakistan’s attack on Pulwama (City in Jammu and Kashmir) by performing Air Strike has been much appreciated.People are moving towards digital which is positive and shows modernization. <br><br><br><br></div>
+	</div>
+<!--Container for heading-->
+<div class="row">	
+	<div class="col-sm-11" id="lang" style="color:blue" font-size="40px">
+        <p><center><B> How the word Modi and Rahul have spread across the world ?</B></center></p></div>
+	<div class="col-sm-1" ></div>
+<!--	<div class="col-sm-4"></div> -->
+</div>
+        
+<!--Row container which consists o globe ,text and languages        -->
+<div class="row">	
+	<div class="col-sm-4" id="three-box">
+        <h2 id="slug">Loading...</h2>
+    </div>
+	<div class="col-sm-4"  >  <p> The Globe shows distinct countries from where tweets about Modi have been received. Its around 38 countries.When checked for Rahul it was less and not worth of plotting. Hence we can infer the popularity of Modi has reached more than Rahul. The right side shows number of distinct languages used for Tweeting on Modi and Rahul. Even this KPI object proves Modi has reached people more than Rahul  </p></div>
+<!--Container for Button    -->
+	<div class="col-sm-4" id="Languages" >
+        <button class="button" onclick="changetext([14])" >Modi</button>
+        <button class="button" onclick="changetext([10])">Rahul</button>
+    </div>
+	</div>    
+    </div>    
+<!--Creating Guage Chart  -->
+<script>
+let d2r = function(d) {
+    return d * (Math.PI / 180);
+};
+    
+let Gauge = function() {
+let c = {
+        element: '#arc',
+        width: 1000,
+        height: 200,
+        margin: 10,
+        yscale: 0.75,
+        chopAngle: 100,
+        thickness: 30,
+        value: {
+            minValue: 0,
+            maxValue: 100,
+            initialvalue: 60
+        },
+        label: {
+            yoffset: 30,
+            unit: '%',
+            labelText: {
+                text: 'Popular on Tweets',
+                yoffset: 20
+            }
+        },
+        gaugeColor: '#dde9f7',
+        indicatorColor: '#4281a4',
+        backgroundColor: '#f5f5f5'
+    };
+       let arcDiv = d3.select("#arc");
+	   let width = arcDiv.node().getBoundingClientRect().width;
+	   let height = arcDiv.node().getBoundingClientRect().width * .2;
+		
+		//console.log(arcDiv.node().getBoundingClientRect());
+    let svg = d3.select(c.element).append('svg')
+        .attr('width', width).attr('height', height);
+        
+    // Add a rect as the background
+    //svg.append('rect').attr('x', 0).attr('y', 0)
+       // .attr('width', width).attr('height', height).attr('fill', c.backgroundColor);
+        
+    let ir = (width - 2*c.margin)/2;
+	let r = ir/Math.sin(d2r(c.chopAngle));
+        
+    let createArc = function(sa, ea) {
+        return d3.svg.arc()
+            .outerRadius(r)
+            .innerRadius(r - c.thickness)
+            .startAngle(d2r(sa))
+            .endAngle(d2r(ea));
+    };
+        
+let addArc = function(arc, color) {
+        return svg.append('path')
+            .attr('d', arc).attr('fill', color)
+            .attr('transform', 'translate(' + (c.margin + ir)
+                    + ',' + (c.margin + r*c.yscale) + '), scale(1, ' + c.yscale + ')');
+    };
+    
+addArc(createArc(-1*c.chopAngle, c.chopAngle), c.gaugeColor);    
+    // Create a 1/2 circle arc and put it at the center
+    addArc(createArc(-90, 90), c.gaugeColor);    
+	
+	let getIndicatorData = function(value) {
+        let min = c.value.minValue;
+        let max = c.value.maxValue;
+        
+        return {
+            sa: c.chopAngle - 2*c.chopAngle*value/(max - min),
+            ea: c.chopAngle
+        };
+    }
+    
+// Add the initial indicator
+let data = getIndicatorData(c.value.initialvalue);
+let indicator = addArc(createArc(data.sa, data.ea), c.indicatorColor);
+
+let createLabel = function(config) {
+        let c = {
+            x: config.width/2,
+            y: config.height/2 + config.label.yoffset,
+            unit: config.label.unit,
+            label: {
+                text: config.label.labelText.text,
+                yoffset: config.label.labelText.yoffset
+            },
+            value: config.value.initialvalue
+        };
+        
+        let text = svg.append('text')
+            .attr("x", c.x)
+            .attr("y", c.y)
+        
+            .attr("text-anchor", "middle")
+            .attr("alignment-baseline", "middle")
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "25px");
+        
+        let label = text.append('tspan')
+            .attr("font-size", "25px")
+            .text(c.value);
+        
+        text.append('tspan')
+            .attr('font-size', '10px').text(c.unit)
+            .attr('fill', '#333333');
+        
+        text = svg.append('text')
+            .attr("x", c.x)
+            .attr("y", c.y + c.label.yoffset)
+            .attr("text-anchor", "middle")
+            .attr("alignment-baseline", "central")
+            .attr("font-family", "sans-serif")
+            .attr('fill', '#a8a8a8')
+            .attr("font-size", "12px");
+        
+        text.text(c.label.text);
+        
+        return label;
+        
+    };
+    
+// Add the label
+let valueText = createLabel(c);
+
+};
+
+   
+window.addEventListener('load', function() {
+    // Test the createGauge function
+    let gauge = new Gauge();
+});
+</script>
+<!--CSS styling for Map-->
+<style>
+      body {
+        margin: 0;
+      }
+      #map {
+        width: 100%;
+        height: 100vh;
+      }
+    </style>
+<!--Creating od Swift Map-->
+<script>
+
+      // Create the map.
+      var map = swiftmap.map("#map");
+
+      // Create a categorical color scheme.
+      var scheme = swiftmap.schemeCategorical()
+        .from(d => d.Party)
+        .to({
+          "BJP": "#FFA500",
+          "DMK": "#F0E68C",
+		  "INC": "#00FF00",
+		  "TMC": "#800080",
+          "TDP": "#A52A2A",
+          "UDF": "#ff0000"
+        })
+        .toOther("#000");
+
+      d3.queue()
+        .defer(d3.json, "india_swift.json") // geospatial data
+        .defer(d3.csv, "result.csv") // tabular data
+        .await(ready);
+
+      function ready(error, geo, tab, india){
+
+        // Filter the tabular data to get just the winners from the non-bye election.
+        //tab = tab.filter(function(d){ return d.Poll_No == "0" && d.Position == "1"; })
+
+        // Add data to the scheme.
+        scheme.data(tab, function(d){ return d.State; });
+
+        // Join geospatial data to your map.
+        // Then draw the map and fill it based on your color scheme.
+        map
+          .layerPolygons(geo, function(d){ return d.properties.ST_NM; })
+            .draw();
+
+          map.layers[0].polygons
+          .transition().duration(1000)
+            .attr("fill", scheme);
+
+        window.onresize = () => map.resize();
+
+      }
+      
+    </script>
+<!--CSs styling for tooltip-->
+<style>
+	tool.tooltip {		
+    position: absolute;			
+    text-align: center;			
+    width: 200px;					
+    height: 200px;					
+    padding: 5px;				
+    font: 14px sans-serif;		
+    background: black;
+        color:white;
+    border: 0px;		
+    border-radius: 8px;			
+    pointer-events: none;}</style>
+<!--Adding Image and tool tip-->
+<script>
+var tool = d3.select("#modi").append("tool")
+.attr("class", "tooltip")
+.style("opacity", 0);
+   
+var svg = d3.select('#modi').append('svg')
+
+
+svg.append('svg:image')
+.attr({
+  'xlink:href': './/modi.jpg',  // can also add svg file here
+  x: 0,
+  y: 0,
+  width: 160,
+  height: 150
+}).on("mouseover", function(d) {  // the mouseover event    
+                tool.transition()        
+                    .duration(200)      
+                    .style("opacity", .85); 
+                
+    tool.html("<br/> <b>Narendra Modi</b> born 17 September 1950 is the current Prime minister of India.Modi is a member of the Bharatiya Janata Party (BJP), and supporter of Rashtriya Swayamsevak Sangh (RSS), a Hindu nationalist volunteer organisation." )
+     .style("left", 0 + "px")		
+            .style("top", 150 + "px");	
+
+                })
+				
+	.on("mouseout",function(d) {  // the mouseover event    
+                tool.transition()        
+                    .duration(200)      
+                    .style("opacity", 0);
+
+                });
+    
+</script>
+<!--CSs styling for tooltip-->
+<style>
+	tool1.tooltip {		
+    position: absolute;			
+    text-align: center;			
+    width: 200px;					
+    height: 200px;					
+    padding: 5px;				
+    font: 14px sans-serif;
+    color:white;
+    background: black;	
+    border: 0px;		
+    border-radius: 8px;			
+    pointer-events: none;}</style>
+ <!--Adding Image and tool tip-->  
+<script>
+var tool1 = d3.select("#rahul").append("tool1")
+.attr("class", "tooltip")
+.style("opacity", 0);
+   
+var svg = d3.select('#rahul').append('svg')
+
+
+svg.append('svg:image')
+.attr({
+  'xlink:href': './/rahul.jpg',  // can also add svg file here
+  x: 0,
+  y: 0,
+  width: 160,
+  height: 150
+}).on("mouseover", function(d) {  // the mouseover event    
+                tool1.transition()        
+                    .duration(200)      
+                    .style("opacity", .85); 
+                
+    tool1.html("<b>Rahul Gandhi</b> is the current President of the Indian National Congress. He hails from a long line of politicians, known as the Nehru-Gandhi family, which has occupied a prominent place in the politics of India ever since the country gained independence in 1947." )
+     .style("right", 0 + "px")		
+            .style("top", 150 + "px");	
+
+                })
+				
+	.on("mouseout",function(d) {  // the mouseover event    
+                tool1.transition()        
+                    .duration(200)      
+                    .style("opacity", 0);
+
+                });
+    
+</script>
+
+<!--Word Cloud Extracted words from R and putting it as variable. -->
+<script>
+d3.wordcloud()
+        .size([450, 400])
+        .selector('#word_modi')
+        .words([{text:"inaccurate",size:"27"},{text:"modern",size:"50"},{text:"rape",size:"35"},{text:"strong",size:"35"},{text:"pm",size:"50"},{text:"attacks",size:"45"},{text:"intelligent",size:"65"},{text:"win",size:"65"},{text:"bjp",size:"80"},{text:"digital",size:"55"},{text:"pleased",size:"40"},{text:"celebrate",size:"37"},{text:"tough",size:"20"},{text:"revertback",size:"10"},{text:"terrific",size:"33"},{text:"appeal",size:"43"},{text:"Speaker",size:"43"},{text:"famous",size:"25"},{text:"interaction",size:"23"},{text:"modi",size:"61"},{text:"congress",size:"41"},{text:"Indian party",size:"46"},{text:"talks",size:"25"},{text:"govt",size:"34"},{text:"election",size:"58"}])
+        .onwordclick(function(d, i) {
+        window.location = "https://www.google.co.uk/search?q=Modi " + d.text;
+        })
+        .start();
+</script>
+  
+<!--Word Cloud Extracted words from R and putting it as variable. -->
+<script>
+d3.wordcloud()
+        .size([450, 400])
+        .selector('#word_rahul')
+        .words([{text:"contempt",size:20},{text:"onslaught",size:12},{text:"memes",size:48},{text:"liar",size:40},{text:"desparate",size:50},{text:"fake",size:50},{text:"disgusting",size:20},{text:"murder",size:5},{text:"propoganda",size:35},{text:"master",size:25},{text:"rahul",size:26},{text:"election",size:10},{text:"congress",size:40},{text:"criminal",size:27},{text:"peace",size:19},{text:"fool",size:50},{text:"govt",size:"34"}])
+        .onwordclick(function(d, i) {
+        window.location = "https://www.google.co.uk/search?q=Rahul Gandhi " + d.text;
+        })
+        .start();
+</script>
+    
+    
+    
+<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<!--    CSS styling for Globe-->
+    <style>
+        body {
+            font-family: "Arial", sans-serif;
+        }
+        
+        .axis {
+            font-size: 13px;
+        }
+        
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke-width: 1px;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+        
+        .label {
+            font-size: 13px;
+        }
+    </style>    
+<!--   Loading Globe.js script -->
+  <canvas id="d3-canvas" width="2048px" height="1024px"></canvas>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/queue-async/1.0.7/queue.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r71/three.min.js"></script>
+  <script src="global-tour.js"></script>
+   
+
+<!-- Adding photo of Modi and Rahul -->
+<script>
+
+var svg = d3.select('#photo').append('svg').attr({width: 400 ,height: 400})
+svg.append('svg:image')
+.attr({
+  'xlink:href': './/modirahul.jpg',  // can also add svg file here
+  x: 0,
+  y: 0,
+  width: 450,
+  height: 400
+})  
+</script>
+<!--Css styling for button -->
+<style>
+.button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  position: relative;
+}
+</style>
+<!--Distinct Languages used. Taking the output from R-->
+<script>
+    
+var data = ["14"];
+var width = 100;
+var height = 100;
+
+var canvas = d3.select("#Languages")
+               .append("svg")
+               .attr("height", 400)
+               .attr("width", 400)
+               //.attr("fill", "red")
+               .append("g");
+    
+var someData = canvas.selectAll("rect")
+                    .data(data)
+                    .enter()
+                     .append("g")
+                      .append("rect")
+                      .attr("height", height)
+                      .attr("width", width)
+                      .style("fill", "red")
+                      .attr('x',50)
+                        .attr('y',50)
+
+canvas.selectAll("g")
+        .append("text")
+    .attr("id", "textLabel")
+         .attr('x',85)
+       .attr('y',105)
+        .attr("font-size", "2em")
+        .attr("color", "black")
+    .text(data);
+    
+        
+var changetext = function(text){
+
+
+canvas.selectAll("#textLabel")
+    .attr('x',80)
+       .attr('y',105)
+        .attr("font-size", "2em")
+        .attr("color", "black")
+    .text(text[0]) }
+    
+</script>
+ 
+</body>	
+</html> 
